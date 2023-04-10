@@ -1,6 +1,6 @@
 import { referenceHtml } from "./reference.js";
 
-export const objectStarHtml = (entityPair) => {
+export const objectReferenceHtml = (entityPair) => {
   let html = "";
   html += `<div class="statement-object">`;
 
@@ -9,17 +9,15 @@ export const objectStarHtml = (entityPair) => {
   let entity = entityPair[0];
   if (entity.constructor.name === "Object") {
     const keys = Object.keys(entity);
-    html += `<span>`
     keys.forEach((key, index) => {
-      html += `<rdf-link>${entity[key]}</rdf-link>`;
+      html += entity[key];
       if (index < keys.length - 1) {
         html += ": ";
       }
     });
-    html += `</span>`
   } else {
     if (entity[0] !== "_") {
-      html += `<rdf-link>${entity}</rdf-link>`;
+      html += entity;
     }
   }
 
