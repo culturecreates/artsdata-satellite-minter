@@ -1,10 +1,12 @@
+import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
+
 class PlaceVignette extends HTMLElement {
   set entity(entity) {
     this.innerHTML = `
       <div  class="list-group">
         <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
           <div class="ms-2 me-auto">
-            <div class="fw-bold">${encodeHTMLEntities(
+            <div class="fw-bold">${EncodeHTMLEntities(
               truncate(entity.name.fr || entity.name.en)
             )}</div>
           ${entity.type} -  ${entity.postalCode}  
@@ -34,7 +36,7 @@ class PlaceVignette extends HTMLElement {
          
         </div>
         <span class="badge bg-secondary rounded-pill">${
-          entity?.sameAs?.[0].uri[0] ? getK(entity.sameAs?.[0].uri) : ""
+          entity?.sameAs?.[0].uri[0] ? DisplayK(entity.sameAs?.[0].uri) : ""
         }</span>
         </div>
       </div>`;
