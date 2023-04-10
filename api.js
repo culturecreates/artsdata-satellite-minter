@@ -3,10 +3,11 @@ const BaseUrl = "http://api.artsdata.ca"
 const MintUrl =`${BaseUrl}/mint`;
 const QueryUrl = `${BaseUrl}/query`;
 const LinkUrl = `${BaseUrl}/link`;
-//http://localhost:3003/query?adid=K5-1&format=jsonld&sparql=viewer/viewer&frame=viewer/viewer
+const ViewerUrl = "http://artsdata-satellite-viewer.s3-website.ca-central-1.amazonaws.com/index.html?adid=";
 
 export {
   MintUrl,
   QueryUrl,
-  LinkUrl
+  LinkUrl,
+  ViewerUrl
 }
