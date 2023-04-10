@@ -1,7 +1,7 @@
 import "./place-vignette.js";
 import "./people-org-vignette.js";
 import "./event-vignette.js";
-import { QueryUrl } from "./Api.js";
+import { QueryUrl } from "./api.js";
 
 const queryString = window.location.search;
 
