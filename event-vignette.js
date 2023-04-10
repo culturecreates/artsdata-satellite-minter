@@ -1,6 +1,7 @@
 import { DisplayList } from "./utils/bilingual-array.js";
 import { DateFormat } from "./utils/date-format.js";
 import { LinkUrl, MintUrl } from  "./api.js";
+import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
 
 class EventVignette extends HTMLElement {
   set entity(entity) {
@@ -8,7 +9,7 @@ class EventVignette extends HTMLElement {
       <div  class="list-group">
         <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
           <div class="ms-2 me-auto">
-            <div class="fw-bold">${encodeHTMLEntities(DisplayList(entity.name))}
+            <div class="fw-bold">${EncodeHTMLEntities(DisplayList(entity.name))}
             </div>
             <a href='${entity.uri}'>${entity.uri}</a>  
             <br>
@@ -34,27 +35,13 @@ class EventVignette extends HTMLElement {
                 : ""
             }
           </div>
-          <span class="badge bg-secondary rounded-pill">${
-            entity?.sameAs?.[0].uri[0] ? getK(entity.sameAs?.[0].uri) : ""
-          }</span>
+          ${
+            entity?.sameAs?.[0].uri[0] ? DisplayK(entity.sameAs?.[0].uri) : ""
+          }
         </div>
       </div>`;
   }
 }
-
-function encodeHTMLEntities(rawStr) {
-  if (rawStr) {
-    return rawStr.replace(/[\u00A0-\u9999<>\&]/g, (i) => `&#${i.charCodeAt(0)};`);
-  } else {
-    return "no string"
-  }
- 
-}
-
-function getK(rawStr) {
-  return rawStr.replace(/http:\/\/kg.artsdata.ca\/resource\//g, "");
-}
-
 
 
 let DisplaySimilarEvents = (links, adUri, classToLink) => {
