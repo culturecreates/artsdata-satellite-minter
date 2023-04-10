@@ -1,4 +1,4 @@
 # artsdata-satellite-minter
-Artsdata Viewer
+Artsdata Minter
 =============
 
