@@ -1,4 +1,5 @@
 import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
+import { LinkUrl, MintUrl } from  "./api.js";
 
 class PlaceVignette extends HTMLElement {
   set entity(entity) {
@@ -24,7 +25,7 @@ class PlaceVignette extends HTMLElement {
           }
           ${
             !entity.sameAs
-              ? `        <br> <form method="post" action="http://api.artsdata.ca/mint" class="inline">
+              ? `        <br> <form method="post" action="${MintUrl}" class="inline">
           <input type="hidden" name="classToMint" value="schema:${entity.type}">
           <input type="hidden" name="externalUri" value="${entity.uri}">
           <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
