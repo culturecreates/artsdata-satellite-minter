@@ -13,11 +13,8 @@ class PeopleOrgVignette extends HTMLElement {
           ${entity.type}
           <br> 
           <a href='${entity.uri}'>${entity.uri}</a>  
-          ${
-            entity.missing
-              ? ` <br>  potential linked entities ${JSON.stringify(entity.missing)}`
-              : ""
-          }
+          ${DisplaySimilarOrgs(entity.missing, entity?.sameAs?.[0].uri, entity.type)}
+          
           ${
             entity.partOf
               ? ` <br>  Graphs: ${JSON.stringify(entity.partOf)}`
@@ -54,5 +51,36 @@ function getK(rawStr) {
 
 const truncate = (input) =>
   input.length > 100 ? `${input.substring(0, 100)}...` : input;
+
+
+let DisplaySimilarOrgs = (links, adUri, classToLink) => {
+  let html = '';
+  if (links) {
+    if ( !Array.isArray(links) ) {
+      links = new Array(links)
+    } ;
+   
+    html += '<br>  potential linked entities: <ul>';
+    links.forEach(element => {
+      html += `<li>`
+      if (adUri &&  element.uri &&  element.uri.split("/").at(-1)[0] != "K" &&  element.sameAs == null ) {
+        html += `<form method="post" action="${LinkUrl}" class="inline">
+          <input type="hidden" name="classToLink" value="schema:${classToLink}">
+          <input type="hidden" name="externalUri" value="${element.uri}">
+          <input type="hidden" name="adUri" value="${adUri}">
+          <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
+          <button type="submit" class="btn btn-info">Link ${element.uri.split("/").at(-1)} to ${adUri} </button>
+        </form>`
+      }
+     
+    html +=  JSON.stringify(element)
+    
+   });
+  html += '</ul>';
+  }
+
+return html;
+}
+
 
 customElements.define("people-org-vignette", PeopleOrgVignette);
