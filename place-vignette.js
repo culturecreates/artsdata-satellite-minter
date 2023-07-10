@@ -1,5 +1,7 @@
 import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
 import { LinkUrl, MintUrl } from  "./api.js";
+import "./utils/dereference-name.js";
+import "./utils/rdf-link.js";
 
 class PlaceVignette extends HTMLElement {
   set entity(entity) {
@@ -10,12 +12,17 @@ class PlaceVignette extends HTMLElement {
             <div class="fw-bold">${EncodeHTMLEntities(
               truncate(entity.name.fr || entity.name.en)
             )}</div>
-          ${entity.type} -  ${entity.postalCode}  
-          <br> 
-          <a href='${entity.uri}'>${entity.uri}</a>  
+            <br> 
+            <a href='${entity.uri}'>${entity.uri}</a>  
+            <br>
+          ${entity.type} 
+          -  ${entity.postalCode}  
+          - ${entity.streetAddress.fr || entity.streetAddress.en}
+          - ${entity.addressLocality.fr || entity.addressLocality.en}
+          <br>
           ${
-            entity.missing
-              ? ` <br>  potential linked entities ${JSON.stringify(entity.missing)}`
+            entity.samePostalCode
+              ? ` <p>Same postal code: ${displayList(entity.samePostalCode)}</p>`
               : ""
           }
           ${
@@ -42,6 +49,19 @@ class PlaceVignette extends HTMLElement {
         </div>
       </div>`;
   }
+}
+
+function displayList(list) {
+  let html = "<ol>";
+  if (Array.isArray(list)) {
+  list.forEach((item) => {
+    html += `<li><dereference-name>${item.uri}</dereference-name>`;
+  });
+} else {
+  html += `<li><dereference-name>${list.uri}</dereference-name>`;
+}
+html += `</ol>`;
+ return html;
 }
 
 function encodeHTMLEntities(rawStr) {

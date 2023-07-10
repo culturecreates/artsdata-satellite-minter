@@ -1,7 +1,7 @@
 import "./place-vignette.js";
 import "./people-org-vignette.js";
 import "./event-vignette.js";
-import { QueryUrl } from "./api.js";
+import { QueryUrl,PublisherAuthority } from "./api.js";
 
 const queryString = window.location.search;
 
@@ -19,16 +19,25 @@ if (urlParams.get("class") == "schema:Event") {
 }
 document.getElementById('class').selectedIndex  = i
 
+
+
+if (urlParams.get("hideMinted") === "on") {
+  document.getElementById('hideMintedSwitch').checked = true;
+}
+
 if (urlParams.get("graph")) {
   document.getElementById('graphUri').value = urlParams.get("graph");
-  searchMintPotential(urlParams.get("graph"), urlParams.get("class"));
+
+  searchMintPotential(urlParams.get("graph"), urlParams.get("class"), urlParams.get("hideMinted"));
 }
 
 function custom_sort(a, b) {
   return new Date(a.startDate["@value"]).getTime() - new Date(b.startDate["@value"]).getTime();
 }
 
-async function searchMintPotential(graph, classToMint) {
+document.getElementById('authority').innerHTML = PublisherAuthority
+
+async function searchMintPotential(graph, classToMint, hideMinted) {
   document.getElementById("buttonSpinner").classList.remove("visually-hidden");
   document.getElementById("buttonReady").classList.add("visually-hidden");
 
@@ -51,7 +60,11 @@ async function searchMintPotential(graph, classToMint) {
     vignette = "people-org-vignette";
     frame="mint/footlight";
   } else if (classToMint === "schema:Event") {
-    sparql = "mint/events";
+    if (hideMinted === "on") {
+      sparql = "mint/events_hide_minted";
+    } else {
+      sparql = "mint/events";
+    }
     vignette = "event-vignette";
     frame="mint/footlight_event";
   }
@@ -80,9 +93,9 @@ async function searchMintPotential(graph, classToMint) {
 
   console.log(json);
   json.data.forEach((entity) => {
-      const el = document.createElement(vignette);
-      el.entity = entity;
-      main.appendChild(el);
+        const el = document.createElement(vignette);
+        el.entity = entity;
+        main.appendChild(el);
   });
 
   document.getElementById("buttonSpinner").classList.add("visually-hidden");

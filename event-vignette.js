@@ -1,7 +1,7 @@
 import { DisplayList } from "./utils/bilingual-array.js";
 import { DateFormat } from "./utils/date-format.js";
-import { LinkUrl, MintUrl } from  "./api.js";
-import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
+import { LinkUrl, MintUrl, PublisherAuthority } from  "./api.js";
+import { EncodeHTMLEntities, DisplayK, DisplayKList, DisplayGraphList}  from  "./utils/urls.js";
 
 class EventVignette extends HTMLElement {
   set entity(entity) {
@@ -13,9 +13,9 @@ class EventVignette extends HTMLElement {
             </div>
             <a href='${entity.uri}'>${entity.uri}</a>  
             <br>
-            ${entity.type} -  ${DateFormat(entity.startDate['@value'])}  
+            ${DateFormat(entity.startDate['@value'])}  
             <br>
-            ${DisplayList(entity.location)} 
+            ${entity.type} -  ${DisplayList(entity.location)} 
           
             ${DisplaySimilarEvents(entity.missing, entity?.sameAs?.[0].uri, entity.type)}
         
@@ -24,14 +24,14 @@ class EventVignette extends HTMLElement {
               ? ` <br> <form method="post" action="${MintUrl}" class="inline">
               <input type="hidden" name="classToMint" value="schema:${entity.type}">
               <input type="hidden" name="externalUri" value="${entity.uri}">
-              <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
+              <input type="hidden" name="publisher" value="${PublisherAuthority}">
               <button type="submit" class="btn btn-danger">Mint</button>
               </form> `
               : ""
             }
             ${
               entity.partOf
-                ? ` <br>  Graphs: ${JSON.stringify(entity.partOf)}`
+                ? ` <br>  Graphs: ${DisplayGraphList(entity.partOf)}`
                 : ""
             }
           </div>
@@ -43,6 +43,16 @@ class EventVignette extends HTMLElement {
   }
 }
 
+let DisplayEvent = (element) => {
+  let html = '';
+  html += `<div class="fw-bold">${EncodeHTMLEntities(DisplayList(element.name))}  ${DisplayKList(element.sameAs)}
+  </div>
+  <a href='${element.uri}'>${element.uri}</a>
+  <br>
+  ${element.startDate && DateFormat(element.startDate['@value'])} 
+  `
+  return html;
+}
 
 let DisplaySimilarEvents = (links, adUri, classToLink) => {
   let html = '';
@@ -59,16 +69,19 @@ let DisplaySimilarEvents = (links, adUri, classToLink) => {
             <input type="hidden" name="classToLink" value="schema:${classToLink}">
             <input type="hidden" name="externalUri" value="${element.uri}">
             <input type="hidden" name="adUri" value="${adUri}">
-            <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
+            <input type="hidden" name="publisher" value="${PublisherAuthority}">
             <button type="submit" class="btn btn-info">Link ${element.uri.split("/").at(-1)} to ${adUri} </button>
           </form>`
         }
        
-        html += JSON.stringify(element) ;
+       // html += JSON.stringify(element) ;
+        html += DisplayEvent(element);
       });
       html += '</ul>';
   }
  return html;
 }
+
+
 
 customElements.define("event-vignette", EventVignette);

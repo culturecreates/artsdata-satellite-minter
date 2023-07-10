@@ -1,5 +1,5 @@
 import { EncodeHTMLEntities, DisplayK }  from  "./utils/urls.js";
-import { LinkUrl, MintUrl } from  "./api.js";
+import { LinkUrl, MintUrl, PublisherAuthority } from  "./api.js";
 
 class PeopleOrgVignette extends HTMLElement {
   set entity(entity) {
@@ -8,7 +8,7 @@ class PeopleOrgVignette extends HTMLElement {
         <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
           <div class="ms-2 me-auto">
             <div class="fw-bold">${EncodeHTMLEntities(
-              truncate(entity.name.fr || entity.name.en || entity.name["@none"] + " (missing lang)" || "")
+              truncate(entity?.name?.fr || entity?.name?.en || entity?.name?.["@none"] + " (missing lang)" || "")
             )}</div>
           ${entity.type}
           <br> 
@@ -25,7 +25,7 @@ class PeopleOrgVignette extends HTMLElement {
               ? `        <br> <form method="post" action="${MintUrl}" class="inline">
           <input type="hidden" name="classToMint" value="schema:${entity.type}">
           <input type="hidden" name="externalUri" value="${entity.uri}">
-          <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
+          <input type="hidden" name="publisher" value="${PublisherAuthority}">
           <button type="submit" class="btn btn-danger">Mint</button>
           </form>
 `
@@ -68,8 +68,8 @@ let DisplaySimilarOrgs = (links, adUri, classToLink) => {
           <input type="hidden" name="classToLink" value="schema:${classToLink}">
           <input type="hidden" name="externalUri" value="${element.uri}">
           <input type="hidden" name="adUri" value="${adUri}">
-          <input type="hidden" name="publisher" value="https://graph.culturecreates.com/id/footlight">
-          <button type="submit" class="btn btn-info">Link ${element.uri.split("/").at(-1)} to ${adUri} </button>
+          <input type="hidden" name="publisher" value="${PublisherAuthority}">
+          <button type="submit" class="btn btn-info">Link ${element.uri.split("/").at(-1)} </button>
         </form>`
       }
      
