@@ -13,11 +13,13 @@ class EventVignette extends HTMLElement {
             </div>
             <a href='${entity.uri}'>${entity.uri}</a>  
             <br>
-            ${DateFormat(entity.startDate['@value'])}  
+            ${DateFormat(entity.startDate['@value'])}
             <br>
-            ${entity.type} -  ${DisplayList(entity.location)} 
+            ${entity.type}
+            <br>
+            ${DisplayList(entity.location)} 
           
-            ${DisplaySimilarEvents(entity.missing, entity?.sameAs?.[0].uri, entity.type)}
+            ${DisplaySimilarEvents(entity.missing, entity?.sameAs?.[0].uri, entity.type, entity.uri, entity.sameAs?.[0].uri)}
         
             ${
              !entity.sameAs
@@ -54,28 +56,36 @@ let DisplayEvent = (element) => {
   return html;
 }
 
-let DisplaySimilarEvents = (links, adUri, classToLink) => {
+let DisplaySimilarEvents = (links, adUri, classToLink, entityUri, entitySameAs) => {
   let html = '';
   if (links) {
     if ( !Array.isArray(links) ) {
       links = new Array(links)
     } ;
     
-      html += '<br>Matching date and place: <ul>';
+      html += '<br>Matching day and place: <ul>';
       links.forEach(element => {
         html += `<li>`
-        if (adUri && element.uri &&  element.uri.split("/").at(-1)[0] != "K" &&  element.sameAs == null ) {
+       
+       // html += JSON.stringify(element) ;
+        html += DisplayEvent(element);
+        if(adUri && element.uri &&  element.uri.split("/").at(-1)[0] != "K" &&  element.sameAs == null ) {
           html += `<form method="post" action="${LinkUrl}" class="inline">
             <input type="hidden" name="classToLink" value="schema:${classToLink}">
             <input type="hidden" name="externalUri" value="${element.uri}">
             <input type="hidden" name="adUri" value="${adUri}">
             <input type="hidden" name="publisher" value="${PublisherAuthority}">
-            <button type="submit" class="btn btn-info">Link ${element.uri.split("/").at(-1)} to ${adUri} </button>
+            <button type="submit" class="btn btn-info">SameAs</button>
+          </form>`
+        } else if ( element.uri && element.uri.includes("kg.artsdata.ca/resource/K") &&  (entitySameAs == null) ) {
+          html += `<form method="post" action="${LinkUrl}" class="inline">
+            <input type="hidden" name="classToLink" value="schema:${classToLink}">
+            <input type="hidden" name="externalUri" value="${entityUri}">
+            <input type="hidden" name="adUri" value="${element.uri}">
+            <input type="hidden" name="publisher" value="${PublisherAuthority}">
+            <button type="submit" class="btn btn-info">Link</button>
           </form>`
         }
-       
-       // html += JSON.stringify(element) ;
-        html += DisplayEvent(element);
       });
       html += '</ul>';
   }
