@@ -74,7 +74,7 @@ async function searchMintPotential(graph, classToMint, hideMinted) {
     frame: frame,
     sparql: sparql,
     graph: graph,
-    limit: 500,
+    limit: 20,
   };
   const urlParams = new URLSearchParams(payload);
   const url = `${QueryUrl}?${urlParams}`;
