@@ -38,7 +38,7 @@ window.bulkMintAll = async () => {
 const minter = async (uri) => {
   console.log(uri);
   let data = {
-    classToMint: "schema:Person",
+    classToMint: "schema:Place",
     externalUri: uri,
     publisher: "http://wikidata.org",
   };
