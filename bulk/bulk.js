@@ -1,7 +1,7 @@
 import { QueryUrl, MintUrl } from "../api.js";
 
 window.getBulkList = async () => {
-  let url = `${QueryUrl}?sparql=mint/bulk&format=json`;
+  let url = `${QueryUrl}?sparql=https://raw.githubusercontent.com/culturecreates/artsdata-planet-ville-de-laval/main/list-events-passed-shacl-automint.sparql&format=json`;
   console.log(url);
   const res = await fetch(url);
   const json = await res.json();
@@ -38,9 +38,9 @@ window.bulkMintAll = async () => {
 const minter = async (uri) => {
   console.log(uri);
   let data = {
-    classToMint: "schema:Place",
+    classToMint: "schema:Event",
     externalUri: uri,
-    publisher: "http://wikidata.org",
+    publisher: "http://kg.artsdata.ca/resource/K1-1",
   };
 
   const res = await fetch(MintUrl, {
