@@ -39,6 +39,10 @@ where {
             }    
             bind(COALESCE(xsd:dateTime(?endDate),xsd:dateTime(?startDate)) as ?filterDate)
             filter(  ?filterDate > now())
+
+            filter not exists {
+                ?focusNode sh:focusNode ?event .
+            }
         } limit 10 offset 0
     }
 
