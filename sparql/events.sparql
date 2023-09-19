@@ -41,7 +41,17 @@ where {
             filter(  ?filterDate > now())
         } limit 10 offset 0
     }
-    ?event schema:location/schema:sameAs* ?location .
+
+    {
+        ?event schema:location ?location .
+    }
+    UNION {
+        ?event schema:location/schema:sameAs ?location .
+    }
+    UNION {
+        ?event schema:location/schema:sameAs/^schema:containedInPlace ?location .
+    }
+   
 
 
     filter not exists {

@@ -48,22 +48,22 @@ async function searchMintPotential(graph, classToMint, hideMinted) {
   let sparql, vignette, frame;
 
   if (classToMint === "schema:Place") {
-    sparql = "mint/places";
+    sparql = "places";
     vignette = "place-vignette";
     frame="mint/footlight";
   } else if (classToMint === "schema:Person") {
-    sparql = "mint/people";
+    sparql = "people";
     vignette = "people-org-vignette";
     frame="mint/footlight";
   } else if (classToMint === "schema:Organization") {
-    sparql = "mint/organizations";
+    sparql = "organizations";
     vignette = "people-org-vignette";
     frame="mint/footlight";
   } else if (classToMint === "schema:Event") {
     if (hideMinted === "on") {
-      sparql = "mint/events_hide_minted";
+      sparql = "events_hide_minted";
     } else {
-      sparql = "mint/events";
+      sparql = "events";
     }
     vignette = "event-vignette";
     frame="mint/footlight_event";
@@ -72,7 +72,7 @@ async function searchMintPotential(graph, classToMint, hideMinted) {
   const payload = {
     format: "json",
     frame: frame,
-    sparql: sparql,
+    sparql: "https://raw.githubusercontent.com/culturecreates/artsdata-satellite-minter/main/sparql/" + sparql + ".sparql",
     graph: graph,
     limit: 300,
   };
