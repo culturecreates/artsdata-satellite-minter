@@ -1,6 +1,7 @@
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ofn:<http://www.ontotext.com/sparql/functions/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
 
 construct {
     ?event schema:name ?name ;
