@@ -1,0 +1,76 @@
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+construct {
+    ?event schema:name ?name ;
+        a ?event_type ;
+        schema:partOf ?graph, ?graph2  ;
+        schema:sameAs ?adid ;
+        schema:missing  ?adid2, ?event2 ;
+        schema:startDate ?startDate ;
+        schema:location ?location .
+
+        ?location a ?location_type; schema:name ?location_name .
+
+        ?event2 schema:startDate ?startDate2 ;  schema:sameAs ?adid2 ; schema:name ?name2 .
+}
+
+# select * 
+
+where {
+    values ?graph {
+         <graph_placeholder>
+    }
+ 
+    values ?event_type {
+        schema:Event schema:EventSeries
+    }
+    graph ?graph {
+        ?event a ?event_type  ;
+               schema:startDate ?startDate ;
+               schema:name ?name .
+        bind(strdt(substr(str(?startDate),1,10),xsd:date) as ?date )
+        OPTIONAL {
+            ?event schema:endDate ?endDate .
+        }
+    }
+    ?event schema:location/schema:sameAs* ?location .
+
+
+
+    bind(COALESCE(xsd:dateTime(?endDate),xsd:dateTime(?startDate)) as ?filterDate)
+    filter(  ?filterDate > now())
+    # filter not exists {
+    #      ?event schema:subEvent ?subEvent .
+    # }
+    filter not exists {
+         ?event ^schema:subEvent ?subEvent2 .
+    }
+    
+
+    ?location a ?location_type .
+    OPTIONAL {
+        ?location schema:name ?location_name .
+    }
+    optional {
+        ?adid schema:sameAs ?event 
+    }
+    optional {
+        graph ?graph2 {
+            ?event2 schema:startDate ?startDate2 ;
+                    schema:location ?location ;
+                    schema:name ?name2 .
+            bind(strdt(substr(str(?startDate2),1,10),xsd:date) as ?date2 )
+            filter ( ?date = ?date2  )
+           filter (?event2 != ?event )
+           # filter (?graph2 != ?graph ) # to get event series
+        }
+        optional {
+            ?adid2 schema:sameAs ?event2 
+        }
+    }
+    filter(!Bound(?adid))
+    filter(!Bound(?adid2))
+}
+
+# SPARQL used by Artsdata.ca Minter UI for upcoming events 

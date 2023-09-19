@@ -1,0 +1,62 @@
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+construct {
+  ?place schema:name ?name ; 
+    a schema:Place ;
+    schema:postalCode ?postalCode ; 
+    schema:streetAddress ?streetAddress ;
+     schema:addressLocality ?addressLocality ;
+    schema:partOf ?graph, ?graph2  ;
+   schema:sameAs ?adid ;
+   schema:samePostalCode ?place2 . 
+   
+    
+
+}
+#select  distinct ?place  ?adid2  
+
+where {
+    values ?graph {
+        <graph_placeholder>
+    }
+    graph ?graph {
+        ?place a schema:Place  ;
+                schema:address ?address  ;
+               schema:name ?name .
+         ?address  schema:postalCode ?postalCode ;
+         schema:streetAddress ?streetAddress ;
+         schema:addressCountry ?addressCountry ;
+         schema:addressLocality ?addressLocality ;
+         schema:addressRegion ?addressRegion .
+        filter(!contains(str(?place),"artsdata.ca/resource/K"))
+    }
+    optional {
+        ?adid schema:sameAs ?place 
+        filter(contains(str(?adid),"artsdata.ca/resource/K"))
+    }
+     optional {
+        ?place schema:sameAs ?adid_anyType
+        filter(contains(str(?adid),"artsdata.ca/resource/K"))
+        bind(URI(?adid_anyType) as ?adid)
+    }
+    optional {
+        graph ?graph2 {
+            ?place2 a schema:Place ;
+                    schema:address/schema:postalCode ?postalCode ;
+                    schema:name ?name2 .
+            #filter(!contains(str(?place2),"artsdata.ca/resource/K"))
+       
+            filter ( ?place != ?place2  )
+            filter(  ?adid != ?place2 )
+           # filter (?graph2 != ?graph )
+        }
+        optional {
+            ?adid2 schema:sameAs ?place2 
+            #filter(contains(str(?adid2),"artsdata.ca/resource/K"))
+        }
+    }
+   # filter(!Bound(?adid))
+
+   
+} order by  ?name_sort

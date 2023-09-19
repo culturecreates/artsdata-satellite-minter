@@ -1,0 +1,22 @@
+PREFIX schema: <http://schema.org/>
+PREFIX ado: <http://kg.artsdata.ca/ontology/>
+ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ 
+construct {
+  ?entity  a schema:Place ;  schema:name ?name .
+}
+where {
+    graph <http://wikidata.org/place> {
+        ?entity  a schema:Place ; rdfs:label ?name .
+        filter(lang(?name) = "en")
+    }
+    minus {
+        ?entity  ado:flagNeedsHumanReconcile ?someone .
+    }
+     minus {
+      graph <http://kg.artsdata.ca/minted/K2> {
+        ?adid  schema:sameAs ?entity .
+      }
+       
+    }
+}

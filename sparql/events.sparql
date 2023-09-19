@@ -1,0 +1,77 @@
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ofn:<http://www.ontotext.com/sparql/functions/>
+
+construct {
+    ?event schema:name ?name ;
+        a ?event_type ;
+        schema:partOf ?graph, ?graph2  ;
+        schema:sameAs ?adid ;
+        schema:missing  ?adid2, ?event2 ;
+        schema:startDate ?startDate ;
+        schema:location ?location .
+
+        ?location a ?location_type; schema:name ?location_name .
+
+        ?event2 schema:startDate ?startDate2 ;  
+            schema:sameAs ?adid2 ; 
+            schema:name ?name2 .
+}
+
+
+where {
+    {
+        select ?graph ?event_type  ?event ?startDate ?endDate ?name  ?filterDate where {
+            values ?graph {
+                <graph_placeholder>
+            }
+            values ?event_type {
+                schema:Event schema:EventSeries
+            }
+            graph ?graph {
+                ?event a ?event_type  ;
+                       schema:startDate ?startDate ;
+                       schema:name ?name .
+               
+                OPTIONAL {
+                    ?event schema:endDate ?endDate .
+                }
+            }    
+            bind(COALESCE(xsd:dateTime(?endDate),xsd:dateTime(?startDate)) as ?filterDate)
+            filter(  ?filterDate > now())
+        } limit 10 offset 0
+    }
+    ?event schema:location/schema:sameAs* ?location .
+
+
+    filter not exists {
+         ?event ^schema:subEvent ?subEvent2 .
+    }
+    
+
+    ?location a ?location_type .
+    OPTIONAL {
+        ?location schema:name ?location_name .
+    }
+    optional {
+        ?adid schema:sameAs ?event 
+    }
+    optional {
+        graph ?graph2 {
+            ?event2 schema:startDate ?startDate2 ;
+                    schema:location ?location ;
+                    schema:name ?name2 .
+           
+            bind( ofn:hoursBetween(?startDate,?startDate2) as ?hour_dif)
+            filter(?hour_dif < 12)
+            filter (?event2 != ?event )
+           
+        }
+        optional {
+            ?adid2 schema:sameAs ?event2 
+        }
+    }
+
+}
+
+# SPARQL used by Artsdata.ca Minter UI for upcoming events 

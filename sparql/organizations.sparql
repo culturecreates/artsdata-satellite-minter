@@ -1,0 +1,50 @@
+PREFIX schema: <http://schema.org/> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
+construct {
+    ?id schema:name ?name ;
+        a schema:Organization ;
+        schema:partOf ?graph2 ;
+        schema:sameAs ?adid ;
+        schema:missing ?id2, ?adid2 ,  ?name2 .
+  
+} where {
+    {
+        select ?graph ?id ?name_str ?adid  ?name where {
+            values ?graph {
+                <graph_placeholder> 
+            } 
+            graph ?graph {
+                ?id a schema:Organization ;
+                    schema:name ?name .
+                filter(!contains(str(?id),"artsdata.ca/resource/K")) 
+                bind(lcase(str(?name)) as ?name_str) 
+            } 
+            optional {
+                ?adid schema:sameAs+ ?id 
+                filter(contains(str(?adid),"artsdata.ca/resource/K")) 
+            } 
+            optional {
+                ?id schema:sameAs+ ?adid_anyType 
+                filter(contains(str(?adid),"artsdata.ca/resource/K")) 
+                bind(URI(?adid_anyType) as ?adid) 
+            } 
+        }
+    }
+    optional {
+        graph ?graph2 {
+            ?id2 luc:Name ?name_str ;
+                 a schema:Organization ;
+                  luc:score ?score ;
+                 schema:name ?name2 .
+             bind (strdt(?score,xsd:float) as ?score_int)
+             filter(?score_int > 4)
+            
+            filter ( ?id != ?id2 ) 
+            filter (?graph2 != ?graph ) 
+        } 
+        optional {
+            ?adid2 schema:sameAs ?id2 
+        } 
+    } 
+} order by ?name_sort
