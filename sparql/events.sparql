@@ -41,15 +41,15 @@ where {
             bind(COALESCE(xsd:dateTime(?endDate),xsd:dateTime(?startDate)) as ?filterDate)
             filter(  ?filterDate > now())
 
-            filter not exists {
-                ?focusNode sh:focusNode ?event .
-            }
-              values ?type {
-                <https://www.laval.ca/52ff792f-a72e-4b2b-859e-2b9faf17491a> # Bibliothèques
-                <https://www.laval.ca/03e3e7d7-ad9a-4f10-86db-dfc9d49b7abb>  # Expositions et spectacles
-                <https://www.laval.ca/685b3eae-7097-4a44-8e72-1c769ed8f6cf> # Événements et festivals
-            }
-            ?event schema:additionalType ?type .
+            # filter not exists {
+            #     ?focusNode sh:focusNode ?event .
+            # }
+            #   values ?type {
+            #     <https://www.laval.ca/52ff792f-a72e-4b2b-859e-2b9faf17491a> # Bibliothèques
+            #     <https://www.laval.ca/03e3e7d7-ad9a-4f10-86db-dfc9d49b7abb>  # Expositions et spectacles
+            #     <https://www.laval.ca/685b3eae-7097-4a44-8e72-1c769ed8f6cf> # Événements et festivals
+            # }
+            # ?event schema:additionalType ?type .
         } limit 10 offset 0
     }
 
