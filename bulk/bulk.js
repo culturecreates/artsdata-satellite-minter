@@ -1,7 +1,7 @@
 import { QueryUrl, MintUrl } from "../api.js";
 
 window.getBulkList = async () => {
-  let url = `${QueryUrl}?sparql=https://raw.githubusercontent.com/culturecreates/artsdata-planet-ville-de-laval/main/list-events-passed-shacl-automint.sparql&format=json`;
+  let url = `${QueryUrl}?sparql=https://raw.githubusercontent.com/culturecreates/artsdata-planet-nac/main/src/sparql/batch-mint-events.sparql&format=json`;
   console.log(url);
   const res = await fetch(url);
   const json = await res.json();
